@@ -22,13 +22,18 @@ public class Graph {
         // Ensuite, on pourrait retirer des sommets du graphe.
         // Ainsi, on pourrait avoir upperBound > order
         // Cette modification de la classe devient nécessaire
-        // si vous implémentez la contraction d’arêtes
+        // si vous implémentez
+        // ou l'algorithme de génération d'arbre couvrant
+        // par suppression de sommet, ou l'opération de contraction d’arête.
         // Autrement, on pourra asssumer que upperBound==order.
 
         // à compléter
     }
 
     public boolean isVertex(int vertex) {
+        // Après avori supprimé certains sommets
+        // pas tous le sommets numerotés 0,...,n-1 sont 'vivant'.
+
         // à compléter
         return true;
     }
@@ -42,6 +47,8 @@ public class Graph {
     }
 
     public void ensureVertex(int vertex) {
+        // Synonime de addVertex ?
+
         // à compléter
     }
 
