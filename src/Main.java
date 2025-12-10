@@ -2,11 +2,9 @@ import Graph.*;
 import GraphClasses.*;
 import RandomTreeAlgos.BreadthFirstSearch;
 import Graphics.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.JFrame;
 
 
@@ -85,8 +83,8 @@ public class Main {
         long startingTime = 0;
 
         public Stats(int noOfSamples) {
-            int nbrOfSamples = noOfSamples;
-            long startingTime = System.nanoTime();
+            this.nbrOfSamples = noOfSamples;
+            startingTime = System.nanoTime();
         }
 
         public void print() {

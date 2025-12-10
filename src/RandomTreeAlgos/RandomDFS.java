@@ -10,42 +10,53 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack; 
 
 public class RandomDFS {
 
     private static final Random gen = new Random();
-    private static BitSet visited;
-    private static ArrayList<Edge> tree;
 
     public static ArrayList<Edge> generateTree(Graph graph) {
-        tree = new ArrayList<>();
-        visited = new BitSet(graph.order);
-        // Choisir un sommet racine aléatoire
+        ArrayList<Edge> tree = new ArrayList<>();
+        BitSet visited = new BitSet(graph.order);
+        Stack<Arc> stack = new Stack<>();
+
+        // 1. Choisir une racine au hasard
         int root = gen.nextInt(graph.order);
-        // On lance le parcours récursif
-        explore(graph, root);
-        
-        return tree;
-    }
+        visited.set(root);
 
-    private static void explore(Graph graph, int u) {
-        visited.set(u);
-        
-        //Récupérer les voisins
-        Arc[] arcs = graph.outEdges(u);
-        
+        // 2. Initialiser la pile avec les voisins de la racine (mélangés)
+        Arc[] rootArcs = graph.outEdges(root);
+        List<Arc> rootNeighbors = Arrays.asList(rootArcs);
+        Collections.shuffle(rootNeighbors);
+        for (Arc a : rootNeighbors) {
+            stack.push(a);
+        }
 
-        List<Arc> neighbors = Arrays.asList(arcs);
-        Collections.shuffle(neighbors); 
+        // 3. Boucle principale (remplace la récursivité)
+        while (!stack.isEmpty()) {
+            // On prend le dernier arc ajouté 
+            Arc arc = stack.pop();
+            int u = arc.getDest();
 
-        // On visite chaque voisin dans l'ordre aléatoire
-        for (Arc a : neighbors) {
-            int v = a.getDest();
-            if (!visited.get(v)) {
-                // Si le voisin n'est pas visité, on ajoute l'arrêt et on continue l'exploration
-                tree.add(a.support);
-                explore(graph, v);
+            if (!visited.get(u)) {
+                // Si le sommet n'est pas encore visité, on l'ajoute à l'arbre
+                visited.set(u);
+                tree.add(arc.support);
+
+                // On ajoute ses voisins à la pile pour les explorer plus tard
+                Arc[] neighbors = graph.outEdges(u);
+                List<Arc> neighborList = Arrays.asList(neighbors);
+                Collections.shuffle(neighborList);
+
+                for (Arc a : neighborList) {
+                    if (!visited.get(a.getDest())) {
+                        stack.push(a);
+                    }
+                }
             }
         }
+        
+        return tree;
     }
 }
