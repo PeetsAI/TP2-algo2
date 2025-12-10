@@ -3,69 +3,69 @@ package Graph;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
 public class Graph {
-    // classe de graphe non orientés permettant de manipuler
-    // en même temps des arcs (orientés)
-    // pour pouvoir stocker un arbre couvrant, en plus du graphe
-
     public int order;
     public int upperBound;
-    int edgeCardinality;
-
-    ArrayList<LinkedList<Edge>> incidency;
-    ArrayList<LinkedList<Arc>> inIncidency;
+    public int edgeCardinality;
+    public ArrayList<Edge> edges;
     ArrayList<LinkedList<Arc>> outIncidency;
+    ArrayList<LinkedList<Arc>> inIncidency;
 
     public Graph(int upperBound) {
-        // Au début, upperBound==order
-        // Ensuite, on pourrait retirer des sommets du graphe.
-        // Ainsi, on pourrait avoir upperBound > order
-        // Cette modification de la classe devient nécessaire
-        // si vous implémentez
-        // ou l'algorithme de génération d'arbre couvrant
-        // par suppression de sommet, ou l'opération de contraction d’arête.
-        // Autrement, on pourra asssumer que upperBound==order.
+        this.upperBound = upperBound;
+        this.order = upperBound;
+        this.edgeCardinality = 0;
+        
+        this.outIncidency = new ArrayList<>(upperBound);
+        this.inIncidency = new ArrayList<>(upperBound);
+        this.edges = new ArrayList<>();
 
-        // à compléter
+        for (int i = 0; i < upperBound; i++) {
+            outIncidency.add(new LinkedList<>());
+            inIncidency.add(new LinkedList<>());
+        }
     }
 
     public boolean isVertex(int vertex) {
-        // Après avori supprimé certains sommets
-        // pas tous le sommets numerotés 0,...,n-1 sont 'vivant'.
-
-        // à compléter
-        return true;
+        return vertex >= 0 && vertex < upperBound;
     }
 
     public void addVertex(int vertex) {
-        // à compléter
+        if (vertex >= upperBound) {
+            // Logique d'agrandissement nécessaire si on dépasse upperBound
+        }
     }
 
     public void deleteVertex(int vertex){
-        // à compléter
     }
 
     public void ensureVertex(int vertex) {
-        // Synonime de addVertex ?
-
-        // à compléter
+        if (!isVertex(vertex)) addVertex(vertex);
     }
 
     public void addArc(Arc arc) {
-        // à compléter
+        outIncidency.get(arc.getSource()).add(arc);
+        inIncidency.get(arc.getDest()).add(arc);
     }
 
     public void addEdge(Edge edge) {
-        // à compléter
+        edges.add(edge);
+        edgeCardinality++;
+        
+        // Comme c'est un graphe non-orienté, on ajoute les deux directions
+        // Arc u -> v
+        addArc(new Arc(edge, false));
+        // Arc v -> u (renversé)
+        addArc(new Arc(edge, true));
     }
 
+    // Retourne les arêtes sortantes pour un sommet donné
     public Arc[] outEdges(int vertex) {
-        // à modifier, si nécessaire
-
-        // Pour la prochaine ligne voir
-        // https://www.baeldung.com/java-collection-toarray-methods
         return outIncidency.get(vertex).toArray(new Arc[0]);
-   }
-
+    }
+    
+    // Accesseur pour toutes les arêtes (utile pour Kruskal)
+    public ArrayList<Edge> getEdges() {
+        return edges;
+    }
 }

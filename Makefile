@@ -29,6 +29,13 @@ clean:
 exec: $(JARFILE).jar
 	java -jar $(JARFILE).jar
 
+# je veux passer deux arguments : le type de graphe et l'algorithme
+execWithArgs: $(JARFILE).jar
+	java -jar $(JARFILE).jar $(typeGraph) $(algorithm)
+
+# par exemple
+# make execWithArgs typeGraph=grid algorithm=RandomBFS
+
 # Ou autrement
 #exec:
 #	java -classpath $(INSTALLDIR) $(MAINCLASS)

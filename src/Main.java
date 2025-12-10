@@ -20,13 +20,19 @@ public class Main {
 
     public static void main(String argv[]) throws InterruptedException {
 
-        Graph graph = chooseFromGraphFamily();
+        // takes the argument as the type of graph to generate and if no argument grid is set by default
+        String typeGraph = argv.length > 0 ? argv[0] : "grid";
+        String algorithm = argv.length > 1 ? argv[1] : "RandomBFS";
+
+        System.out.println("Generating random tree on a " + typeGraph + " graph using " + algorithm + " algorithm.");
+
+        Graph graph = chooseFromGraphFamily(typeGraph);
         ArrayList<Edge> randomTree = null;
 
         int noOfSamples = 10;
         Stats stats = new Stats(noOfSamples);
         for (int i = 0; i < noOfSamples; i++) {
-            randomTree = genTree(graph);
+            randomTree = genTree(graph, algorithm);
             stats.update(randomTree);
         }
         stats.print();
@@ -34,33 +40,40 @@ public class Main {
         if (grid != null) showGrid(grid, randomTree);
     }
 
-    private static Graph chooseFromGraphFamily() {
-        // Parametriser ici cette fonction afin de pouvoir choisir
-        // quelle classe de graphe utiliser
-
-        grid = new Grid(1920 / 11, 1080 / 11);
-        Graph graph = grid.graph;
-        //Graph graph = new Complete(400).graph;
-        //Graph graph = new ErdosRenyi(1_000, 100).graph;
-        //Graph graph = new Lollipop(1_000).graph;
-        return graph;
+    private static Graph chooseFromGraphFamily(String type) {
+        if (type.equals("grid")) {
+            grid = new Grid(1920 / 11, 1080 / 11);
+            return grid.graph;
+        } else if (type.equals("complete")) {
+            return new Complete(400).graph;
+        } else if (type.equals("erdosrenyi")) {
+            return new ErdosRenyi(1_000, 100).graph;
+        } else if (type.equals("lollipop")) {
+            return new Lollipop(1_000).graph;
+        } else {
+            throw new IllegalArgumentException("Unknown graph type: " + type);
+        }
     }
 
-    public static ArrayList<Edge> genTree(Graph graph) {
-        ArrayList<Edge> randomTree;
+ public static ArrayList<Edge> genTree(Graph graph, String algorithm) {
 
-        // TOOO : modifier l'algorithme utilisé ici
-        // ou bien parametriser à l'aide de la ligne de commande
-
-        // Non-random BFS
-        ArrayList<Arc> randomArcTree =
-                BreadthFirstSearch.generateTree(graph, 0);
-
-        randomTree = new ArrayList<>();
+    if (algorithm.equals("RandomBFS")) {
+        ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph, 0);
+        ArrayList<Edge> randomTree = new ArrayList<>();
         for (Arc a : randomArcTree) randomTree.add(a.support);
-        return randomTree;
+                return randomTree;
+    } else if (algorithm.equals("RandomKruskal")) {
+        return RandomTreeAlgos.RandomKruskal.generateTree(graph);
+    } else if (algorithm.equals("AldousBroder")) {
+        return RandomTreeAlgos.AldousBroder.generateTree(graph);
+    } else if (algorithm.equals("Wilson")) {
+        return RandomTreeAlgos.Wilson.generateTree(graph);
+    } else if (algorithm.equals("RandomDFS")) {
+        return RandomTreeAlgos.RandomDFS.generateTree(graph);
+    } else {
+        throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
     }
-
+    }
 
     private static class Stats {
         public int nbrOfSamples = 10;
@@ -120,8 +133,8 @@ public class Main {
         final Labyrinth laby = new Labyrinth(grid, rooted);
 
         laby.setStyleBalanced();
-//		laby.setShapeBigNodes();
-//		laby.setShapeSmallAndFull();
+	    //laby.setShapeBigNodes();
+		//laby.setShapeSmallAndFull();
         laby.setShapeSmoothSmallNodes();
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -13,9 +13,18 @@ public class BreadthFirstSearch {
 	ArrayList<Arc> tree;
 	BitSet reached;
 	
-	private void push(int vertex) {
-		for (Arc arc : graph.outEdges(vertex)) frontier.offer(arc);
-	}
+	
+
+    private void push(int vertex) {
+        Arc[] arcs = graph.outEdges(vertex);
+        // Conversion en liste pour mélanger
+        List<Arc> neighbors = Arrays.asList(arcs);
+        Collections.shuffle(neighbors); 
+
+        for (Arc arc : neighbors) {
+            frontier.offer(arc);
+        }
+    }
 	
 	private void explore(Arc nextArc) {
 		if (reached.get(nextArc.getDest())) return;
